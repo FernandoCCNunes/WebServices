@@ -21,6 +21,7 @@ open class WebServiceRequest {
     private var onFailureListener: ((response: WebServiceResponse) -> Unit)? = null
     private var onCompleteListener: ((response: WebServiceResponse) -> Unit)? = null
     private var onCancelListener: (() -> Unit)? = null
+    private var data: JSONObject? = null
 
     constructor(context: Context) {
         this.context = context
@@ -131,7 +132,7 @@ open class WebServiceRequest {
         makeUrlWithParams()
         request = object: JsonObjectRequest(this.method, "${this.urlPrefix}${this.url}", this.params,
             Response.Listener {
-                this.response?.data = it
+                this.data = it
                 if (onSuccessListener != null ) {
                     this.onSuccessListener!!(this.response!!)
                 }
@@ -140,8 +141,6 @@ open class WebServiceRequest {
                 }
             },
             Response.ErrorListener {
-                this.response?.cause = it.cause
-                this.response?.message = it.message
                 if (this.onCompleteListener != null) {
                     this.onCompleteListener!!(this.response!!)
                 }
